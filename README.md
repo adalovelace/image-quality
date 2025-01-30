@@ -1,2 +1,2 @@
 # image-quality
-Dataset used for the image quality assessment with LLMs
+Dataset used for the image quality assessment with LLMs (coming soon).
