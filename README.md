@@ -21,6 +21,9 @@ Justifications for the scores on a subset of 14 ads from 114 users. Original jus
 
 [dataset_exploration.ipynb](dataset_exploration.ipynb)
 
+## Code
+
+[scripts/extract_img_quality_score.py](scripts/extract_img_quality_score.py): Script to extract quality scores from images using different multimodal LLMs.
 
 ## Image Quality Aspects Taxonomy
 
