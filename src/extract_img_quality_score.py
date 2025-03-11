@@ -14,13 +14,8 @@ MODEL_NAME = "gpt-4o-mini"
 REGION_NAME = "us-east-1"
 
 category = "clothes"
-ITEM_TYPE = "clothing item" 
-
 # category = "sofas"
-# ITEM_TYPE = "sofa" 
-
 # category = "handbags"
-# ITEM_TYPE = "handbag"
 
 ADS_PATH = f"../notebooks/study_dataset/{category}.parquet"
 
@@ -51,10 +46,28 @@ def write_text_to_file(costs, filename):
     with open(filename, "w") as f:
         print(f.write(costs))
 
+def process_responses(df, client, chat, model_id, region_name, prompt, model=None):
+    if "nova" in model_id:
+        return zip(*[
+            call_aws_bedrock_converse(client, model_id, REGION_NAME, prompt, ad_id, img_bytes) 
+            for ad_id, img_bytes in tqdm(zip(df['ad_id'], df['image']))
+        ])
+    elif "gpt" in model_id:
+        assert os.environ["OPENAI_API_KEY"] is not None
+        return zip(*[
+            call_gpt4(client, model_id, prompt, ad_id, img_bytes)
+            for ad_id, img_bytes in tqdm(zip(df['ad_id'], df['image']))
+        ])
+    else:
+        return zip(*[
+            call_aws_bedrock(chat, model_id, region_name, prompt, ad_id, img_bytes)
+            for ad_id, img_bytes in tqdm(zip(df['ad_id'], df['image']))
+        ])
+
 
 if __name__ == "__main__":
     
-    df = pd.read_parquet(ADS_PATH)[:3]
+    df = pd.read_parquet(ADS_PATH)
     print("Dataset")
     print("Shape:", df.shape)
     print(df.head())
@@ -62,7 +75,7 @@ if __name__ == "__main__":
     max_score = 5
     screenshot_score = -1
     
-    prompt = select_prompt(PROMPT_TYPE, ITEM_TYPE, max_score, screenshot_score)
+    prompt = select_prompt(PROMPT_TYPE, category, max_score, screenshot_score)
     
     # # for some reason I can't figure out I get this error
     # # Invalid control character at: line 3 column 232 (char 247)
@@ -70,19 +83,15 @@ if __name__ == "__main__":
     # prompt = remove_invalid_control_characters(prompt)
     
     print("Prompt: ", prompt)
-    model_id = get_model_id()
+    model_id = get_model_id(MODEL_NAME)
+    if not model_id:
+        raise ValueError(f"Invalid model: {MODEL_NAME}.")
+    
+    model, client, chat = None, None, None
     client, chat = create_client_and_chat(model_id, REGION_NAME)
 
-    if "nova" in MODEL_NAME:
-        responses, input_tokens, output_tokens = zip(*[call_aws_bedrock_converse(client, prompt, ad_id, img_bytes)
-             for ad_id, img_bytes in tqdm(zip(df['ad_id'], df['image']))])
-    elif "gpt" in MODEL_NAME:
-            assert os.environ["OPENAI_API_KEY"] is not None
-            responses, input_tokens, output_tokens = zip(*[call_gpt4(client, model_id, prompt, ad_id, base64.b64encode(img_bytes).decode("utf-8"))
-             for ad_id, img_bytes in tqdm(zip(df['ad_id'], df['image']))])
-    else:
-        responses, input_tokens, output_tokens = zip(*[call_aws_bedrock(chat, prompt, ad_id, base64.b64encode(img_bytes).decode("utf-8"))
-             for ad_id, img_bytes in tqdm(zip(df['ad_id'], df['image']))])
+    responses, input_tokens, output_tokens = process_responses(df, client, chat, model_id, 
+                                                               REGION_NAME, prompt, model)
         
     
     print(responses[:4])
