@@ -59,13 +59,8 @@ The list of models can also be found in [src/utils/models.py].
 ### Setting up LLM permissions 
 
 #### Bedrock permissions
-Currently the notebooks and scripts using Bedrock LLMs only run in the `p10n-vs-dev-01` Unicron cluster using this role `arn:aws:iam::873987660173:role/unicron-bedrock-and-s3` which allows to call AWS Bedrock. This role is also set up to have  access to Databox by adding a trust relationship with our Databox role (note that this has to be done both on our AWS account as well as from DataHub Permissions).
+To use Bedrock models you need an AWS account and a role with access to Bedrock.
 
-To enable them in other environments we should add this role (or create a new one) to the Unicron cluster by asking CRE in #unicron-users channel.
-
-To use Bedrock, we need to manually enable the models we want to use in the AWS Console. Currently only **Text & Vision** models have been enabled.
-
-![enable_models](enable_models.png)
 
 #### GPT permissions
 
