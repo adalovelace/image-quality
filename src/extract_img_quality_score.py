@@ -8,7 +8,6 @@ from utils.cost_calculator import calculate_costs
 from utils.gpt_chat import call_gpt4
 from adapters.gpt_chat import call_gpt4
 from adapters.bedrock_chat import call_aws_bedrock, generate_bedrock_chat, call_aws_bedrock_converse
-from adapters.qwen import create_qwen2_model, call_local_model_transformers, call_local_model_openai_server
 from utils.models import get_model_id
 from openai import OpenAI
 
@@ -19,13 +18,13 @@ category = "clothes"
 # category = "sofas"
 # category = "handbags"
 
-ADS_PATH = f"../notebooks/study_dataset/{category}.parquet"
+ADS_PATH = "../survey_dataset/ads.parquet"
 
 PROMPT_TYPE = "criteria" #"criteria" #"generic" #"refined" #
 
-LLM_FEATURES_PATH = f"../notebooks/study_dataset/llm_features_{category}_{MODEL_NAME}_prompt={PROMPT_TYPE}.parquet"
+LLM_FEATURES_PATH = f"../survey_dataset/llm_features_{MODEL_NAME}_prompt={PROMPT_TYPE}.parquet"
     
-COSTS_FILE = f"../notebooks/study_dataset/llm_costs_{category}_{MODEL_NAME}_prompt={PROMPT_TYPE}.txt"
+COSTS_FILE = f"../survey_dataset/llm_costs_{MODEL_NAME}_prompt={PROMPT_TYPE}.txt"
 
 
 def create_client_and_chat(model_id, region_name):
@@ -68,9 +67,8 @@ if __name__ == "__main__":
     print(df.head())
     
     max_score = 5
-    screenshot_score = -1
     
-    prompt = select_prompt(PROMPT_TYPE, category, max_score, screenshot_score)
+    prompt = select_prompt(PROMPT_TYPE, category, max_score)
     
     # # for some reason I can't figure out I get this error
     # # Invalid control character at: line 3 column 232 (char 247)
@@ -91,7 +89,7 @@ if __name__ == "__main__":
     
     print(responses[:4])
     
-    costs = calculate_costs(sum(input_tokens), sum(output_tokens))
+    costs = calculate_costs(MODEL_NAME, sum(input_tokens), sum(output_tokens))
     print("Saving costs to ", COSTS_FILE)
     write_text_to_file(costs, COSTS_FILE)
 
