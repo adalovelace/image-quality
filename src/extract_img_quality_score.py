@@ -4,7 +4,6 @@ import argparse
 from tqdm import tqdm
 from utils.prompts import select_prompt
 from utils.cost_calculator import calculate_costs
-from utils.gpt_chat import call_gpt4
 from adapters.gpt_chat import call_gpt4
 from adapters.bedrock_chat import call_aws_bedrock, generate_bedrock_chat, call_aws_bedrock_converse
 from adapters.qwen import create_qwen2_model, call_local_model_transformers, call_local_model_openai_server
