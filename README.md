@@ -31,6 +31,17 @@ Taxonomy of quality aspects for marketplace item images.
 
 [src/extract_img_quality_score.py](scripts/extract_img_quality_score.py): Script to extract quality scores from images using different multimodal LLMs. 
 
+You can run it with the following command.
+```
+python extract_img_quality_score.py --model <model_name> --prompt <prompt_type> --region <region_name>
+```
+By default, the AWS region is `us-east-1`.
+
+Example:
+```
+python extract_img_quality_score.py --model gpt-4o-mini --prompt generic
+```
+
 You will need to setup LLM permissions to be able to call the supported LLMs (see below).
 
 ### Supported models
@@ -42,6 +53,8 @@ You will need to setup LLM permissions to be able to call the supported LLMs (se
 * OpenAI GPT 4o
 * Qwen2-5-VL-7B
 * Qwen2-5-VL-72B
+
+The list of models can also be found in [src/utils/models.py].
 
 ### Setting up LLM permissions 
 
