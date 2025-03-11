@@ -6,7 +6,9 @@ from tqdm import tqdm
 from utils.prompts import select_prompt
 from utils.cost_calculator import calculate_costs
 from utils.gpt_chat import call_gpt4
-from utils.bedrock_chat import call_aws_bedrock, generate_bedrock_chat, call_aws_bedrock_converse
+from adapters.gpt_chat import call_gpt4
+from adapters.bedrock_chat import call_aws_bedrock, generate_bedrock_chat, call_aws_bedrock_converse
+from adapters.qwen import create_qwen2_model, call_local_model_transformers, call_local_model_openai_server
 from utils.models import get_model_id
 from openai import OpenAI
 
@@ -34,13 +36,6 @@ def create_client_and_chat(model_id, region_name):
         client, chat = generate_bedrock_chat(model_id, region_name)
 
     return client, chat
-
-def remove_invalid_control_characters(text): 
-    pattern = re.compile(r'[^a-zA-Z0-9,. ]')
-    # Use the sub() method to replace invalid control characters with an empty string 
-    cleaned_text = pattern.sub('', text)
-    return cleaned_text
-
 
 def write_text_to_file(costs, filename):
     with open(filename, "w") as f:
