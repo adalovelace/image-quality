@@ -19,7 +19,19 @@ Score 5: The image is fantastic, with none or minor things to improve.
 Return the score and an justification for the score in JSON format with only the following keys: score, justification. Only return the JSON response with no other explanation and without including "json" prefix."""
 
 
-def select_prompt(prompt_type, item_type, max_score):
+CATEGORY_TO_ITEM_TYPE = {
+    "clothes": "clothing item", 
+    "sofas": "sofa",
+    "handbags": "handbag",
+    "all": "second hand item"
+}
+
+
+def select_prompt(prompt_type, category, max_score):
+    assert category in CATEGORY_TO_ITEM_TYPE.keys()
+    
+    item_type = CATEGORY_TO_ITEM_TYPE.get(category, "second hand item")
+
     if prompt_type == "generic":
         return generic_prompt_func(item_type, max_score)
     elif prompt_type == "criteria":

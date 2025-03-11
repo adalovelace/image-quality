@@ -1,11 +1,11 @@
-  
+import base64
 import json
 import time
 import boto3
 from botocore.config import Config
-
 from langchain_aws.chat_models import ChatBedrock
 from langchain_core.messages import SystemMessage, HumanMessage
+
 
 def generate_bedrock_chat(model_id, region_name):
     # Setting up an AWS bedrock client
@@ -39,10 +39,9 @@ def generate_bedrock_chat(model_id, region_name):
     return bedrock_client, chat
 
 
-def call_aws_bedrock_converse(client, model_id, region_name, prompt, ad_id, encoded_img):
+def call_aws_bedrock_converse(client, model_id, region_name, prompt, ad_id, img_bytes):
     retry_count = 0
     response_as_dict = {}
-   
     
     while retry_count < 5:
         try:
@@ -56,10 +55,9 @@ def call_aws_bedrock_converse(client, model_id, region_name, prompt, ad_id, enco
                             "image": { 
                                 "format": "jpeg",
                                 "source": {
-                                    "bytes": encoded_img # Binary array (Converse API) or Base64-encoded string (Invoke API)
+                                    "bytes": img_bytes 
                                 }
                             }
-                            
                         },
                         {
                             "text": prompt
@@ -99,7 +97,7 @@ def call_aws_bedrock_converse(client, model_id, region_name, prompt, ad_id, enco
             retry_count += 1
             wait_time = 2 ** retry_count  # Exponential backoff
             print("Recreating chat...")
-            chat = generate_bedrock_chat(model_id, region_name)
+            client, chat = generate_bedrock_chat(model_id, region_name)
             print("Waiting....")
             time.sleep(wait_time)
     
@@ -110,7 +108,8 @@ def call_aws_bedrock_converse(client, model_id, region_name, prompt, ad_id, enco
     return response_as_dict, 0, 0
 
 
-def call_aws_bedrock(chat, prompt, ad_id, encoded_img):
+def call_aws_bedrock(chat, model_id, region_name, prompt, ad_id, img_bytes):
+    base64_image = base64.b64encode(img_bytes).decode("utf-8")
     retry_count = 0
 
     while retry_count < 5:
@@ -122,7 +121,7 @@ def call_aws_bedrock(chat, prompt, ad_id, encoded_img):
                         {
                             "type": "image_url",
                             "image_url": {
-                                "url": f"data:image/png;base64,{encoded_img}"
+                                "url": f"data:image/png;base64,{base64_image}"
                             },
                         },
                         {
@@ -150,7 +149,7 @@ def call_aws_bedrock(chat, prompt, ad_id, encoded_img):
             retry_count += 1
             wait_time = 2 ** retry_count  # Exponential backoff
             print("Recreating chat...")
-            chat = generate_bedrock_chat(MODEL_ID, REGION_NAME)
+            client, chat = generate_bedrock_chat(model_id, region_name)
             print("Waiting....")
             time.sleep(wait_time)
     

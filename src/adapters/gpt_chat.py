@@ -1,6 +1,8 @@
 
 import json
 import re
+import base64
+
 """
 Sometimes the response returns some text before and/or after the JSON file.
 This method cleans the response and just returns the JSON part.
@@ -25,7 +27,9 @@ def clean_content_and_return_json(text):
         return None
     
     
-def call_gpt4(client, model_id, prompt, ad_id, base64_image):
+def call_gpt4(client, model_id, prompt, ad_id, img_bytes):
+    base64_image = base64.b64encode(img_bytes).decode("utf-8")
+
     result_quality = client.chat.completions.create(
         model=model_id,
         messages=[

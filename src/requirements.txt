@@ -1,0 +1,12 @@
+pandas
+tqdm
+langchain-aws
+langchain_core
+langchain-text-splitters
+openai
+boto3
+botocore
+pillow
+torch
+transformers
+pyarrow
