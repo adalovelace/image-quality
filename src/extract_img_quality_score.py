@@ -18,13 +18,13 @@ category = "clothes"
 # category = "sofas"
 # category = "handbags"
 
-ADS_PATH = "../survey_dataset/ads.parquet"
+ADS_PATH = "../datasets/ads.parquet"
 
 PROMPT_TYPE = "criteria" #"criteria" #"generic" #"refined" #
 
-LLM_FEATURES_PATH = f"../survey_dataset/llm_features_{MODEL_NAME}_prompt={PROMPT_TYPE}.parquet"
+LLM_FEATURES_PATH = f"../datasets/llm_features_{MODEL_NAME}_prompt={PROMPT_TYPE}.parquet"
     
-COSTS_FILE = f"../survey_dataset/llm_costs_{MODEL_NAME}_prompt={PROMPT_TYPE}.txt"
+COSTS_FILE = f"../datasets/llm_costs_{MODEL_NAME}_prompt={PROMPT_TYPE}.txt"
 
 
 def create_client_and_chat(model_id, region_name):

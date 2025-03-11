@@ -1,0 +1,11 @@
+
+        Input cost (1K tokens) = 0.00015
+        Output cost (1K tokens) = 0.0006
+        -----
+        Total input tokens = 26250
+        Total output tokens = 196
+        -----
+        Total input cost  = 0.003938$
+        Total output cost = 0.000118$
+        Total cost of run = 0.004055$
+    
