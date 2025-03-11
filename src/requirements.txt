@@ -6,6 +6,7 @@ langchain-text-splitters
 openai
 boto3
 botocore
+pillow
 torch
 transformers
-pillow
+pyarrow
